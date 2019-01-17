@@ -1,0 +1,31 @@
+.TH DTMF 1 "JAN 2019" Linux "User Manuals"
+.SH NAME
+dtmf \- a tool to generate DTMF tones. DTMF encoder/decoder for regular files.
+.SH SYNOPSIS
+.B  dtmf [-s string to play]
+.br
+.B         | [ -b input file to convert] [-t tone file] [-o output file]
+.br
+.B         | [-h] | [-V]    
+.SH DESCRIPTION
+dtmf is listening for events on file system involving file or directories and it's able to send a notification and/or perform actiotions using a the plugins availables. For example, it's possible to send notifications by email, Apache Kafka messages, snmp traps, syslog-ng log entries or simply writing on the cosole.
+.SH OPTIONS
+.IP -b\ input\ file 
+It is a regular file (binary or text) that will be        
+converted in tone coding.                                 
+.IP -t\ input\ file                                                
+It contains a sequence of tones that will be converted back to the initial file (binary or text).                
+.IP -o\ output\ file                                              
+This flag is necessary if -b or -t is specified. This file will contain the encoded/decode data.           
+.IP -s\ string
+The string, with one or more ascii characters representing tones (01234567890ABCD#*), will be reproduced by sound card.
+.IP -h 
+print this help message.
+.IP -V 
+version information.
+.SH BUGS
+This program is a beta version, changes are possible. Please send me bug report to address specified here.
+.SH AUTHOR
+Gabriele Bonacini <gabriele.bonacini@protonmail.com>
+.SH "SEE ALSO"
+.BR DTMF(1)
