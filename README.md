@@ -6,10 +6,7 @@ This library permits to produce DTMF ( https://en.wikipedia.org/wiki/Dual-tone_m
 Trivia:
 =======
 
-I intended to use it for radio hacks / experiments. Then I watched Bandersnatch ( https://en.wikipedia.org/wiki/Black_Mirror:_Bandersnatch ) and I felt the necessity to try, in 2019, the experience ( read the pain) of saving  a file on audio cassette. So I added a command line tool based on my library, able to conver a file (binary or text ) in a sequence of DTMF tones :-) 
-There are 16 DTMF tones, so you can covert a byte in two sequence of two DTMF tones, one encoding the four most significative bits, the other the less significative. 
-For now the speed is 4 tones for second, so 2 bytes for second. So definitely it's slower than a C64 cassette player ( 300 byte per second if I remember), but ITU specs show that the speed should be improved drastically, maybe in the future I'll do some changes ( suggestions are welcome ), for now I think it's awesome, so '80 (maybe '70) ! :-)
-
+I intended to use it for radio hacks / experiments. Then I watched Bandersnatch ( https://en.wikipedia.org/wiki/Black_Mirror:_Bandersnatch ) and I felt the necessity to try, in 2019, the experience ( read "the pain") of saving a file on audio cassette. So I added a command line tool based able to convert a file (binary or text ) in a sequence of DTMF tones  There are 16 DTMF tones, so you can covert a byte in a sequence of two DTMF tones, one encoding the four most significative bits, the other the less significative. For now, the speed is 4 tones for second, so 2 bytes for second. Definitely it's slower than a C64 cassette player ( 300 byte per second, if I remember), but ITU specs show that the speed should be improved drastically, maybe in the future I'll do some changes ( suggestions are welcome ), for now I think it's awesome, so 80s (maybe 70s) ! 
 
 DISCLAIMER:
 ===========
