@@ -85,8 +85,8 @@ namespace dtmfutil {
         for( istreambuf_iterator<char> it(ftd.iFile.rdbuf());
              it != istreambuf_iterator<char>();
              ++it){
-                 unsigned char lower  =  *it & 0b0000'1111,
-                               upper  = (*it & 0b1111'0000 ) >> 4;
+                 unsigned char lower  { static_cast<unsigned char>(*it & 0b0000'1111 ) },
+                               upper  { static_cast<unsigned char>((*it & 0b1111'0000 ) >> 4 ) };
                  out    << ftd.binToDtmf[upper];
                  out    << ftd.binToDtmf[lower];
         }
@@ -210,7 +210,7 @@ namespace dtmfutil {
     {}
 
     float Dtmf::bgsine(short in) noexcept{
-        static constexpr float coeff = 2 * M_PI * ( 1 / 65535.0F );
+        static constexpr float coeff { 2 * M_PI * ( 1 / 65535.0F ) };
         return sinf( in * coeff );
     }
 
@@ -222,7 +222,7 @@ namespace dtmfutil {
            short        c1  { 0 },
                         c2  { 0 };
 
-           for(size_t idx =0;  idx<l;  idx++, c1+= ad1, c2+= ad2 ) {
+           for(size_t idx { 0 };  idx<l;  idx++, c1+= ad1, c2+= ad2 ) {
                 float   y   {  (Dtmf::bgsine(c1) + Dtmf::bgsine(c2)) * 0.5F };
                 (get<DATA>(el.second)).push_back(static_cast<unsigned char>((y + 1.0F) * 127.0F));
            }
@@ -232,7 +232,7 @@ namespace dtmfutil {
     bool Dtmf::play(const string& str) const noexcept{
        bool  ret{ true };
 
-       for(auto ch=str.begin(); ch != str.end() ; ++ch){
+       for(auto ch{str.begin()}; ch != str.end() ; ++ch){
           ret = play(*ch);
           if(!ret) break;
        }
@@ -243,7 +243,7 @@ namespace dtmfutil {
     bool Dtmf::play(const char* const ch, size_t len) const noexcept{
        bool  ret  { true };
 
-       for(size_t idx=0; idx<len; ++idx){
+       for(size_t idx{0}; idx<len; ++idx){
           ret = play(*(ch+idx));
           if(!ret) break;
        }
@@ -254,7 +254,7 @@ namespace dtmfutil {
     bool Dtmf::play(const std::vector<char>& vec, size_t len)  const noexcept{
        bool  ret  { true };
 
-       for(size_t idx=0; idx<len; ++idx){
+       for(size_t idx{0}; idx<len; ++idx){
           ret = play(vec.at(idx));
           if(!ret) break;
        }
@@ -265,7 +265,7 @@ namespace dtmfutil {
     bool Dtmf::play(const std::vector<char>& vec)  const noexcept{
        bool  ret  { true };
 
-       for(auto el = vec.cbegin(); el != vec.cend(); ++el){
+       for(auto el { vec.cbegin() }; el != vec.cend(); ++el){
           ret = play(*el);
           if(!ret) break;
        }

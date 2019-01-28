@@ -22,7 +22,7 @@
 
 using namespace std;
 using namespace dtmfutil;
-using namespace parCmdLine;
+using namespace parcmdline;
 
 void paramError(const char* progname, const char* err)  noexcept    __attribute__ ((noreturn));
 void versionInfo(void)                                  noexcept    __attribute__ ((noreturn));
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
            if(pcl.isSet('s')){
                Dtmf  dtmf;
                dtmf.init();
-               bool res = dtmf.play(pcl.getValue('s'));
+               bool res { dtmf.play(pcl.getValue('s')) };
                if(!res) 
                   cerr << "Player error: " << dtmf.getErrMsg() << endl;
            }
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
                 ssize_t  res   { read(STDIN_FILENO, buff.data(), buff.size()) };
                 cerr  << "Read len: " << res << endl;
                 if(res > 0){
-                    bool bres = dtmf.play(buff.data(), res);
+                    bool bres { dtmf.play(buff.data(), res) };
                     if(!bres) 
                         cerr << "Player error: " << dtmf.getErrMsg() << endl;
                 }else{
