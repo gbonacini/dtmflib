@@ -25,6 +25,7 @@ namespace dtmfutil {
     using std::make_tuple;
     using std::get;
     using std::vector;
+    using std::array;
     using std::string;
     using std::to_string;
     using std::endl;
@@ -77,9 +78,54 @@ namespace dtmfutil {
                  throw string("Dtmf decoding: Unexpected Error.");
         }
 
-        return out;
+        return out; 
     }
 
+    ostream& operator<< (ostream& out, const BinFileToMT8870Dtmf& dtf){
+        try{
+            string       buff,
+                         parityString;
+            const char   digitSep   { 'D' },
+                         byteSep    { 'B' },
+                         endMsg     { '#' };
+            const size_t MAX_DIGIT  { 3 };
+            array<unsigned char, MAX_DIGIT> parityCount{0b00000001, 0b00000010, 0b00000100};
+
+            for( istreambuf_iterator<char> it(dtf.iFile.rdbuf());
+                 it != istreambuf_iterator<char>();
+                 ++it){
+                    buff = to_string(*it);
+                    if(buff.size() == 1)
+                        buff.insert (0, "00");
+                    if(buff.size() == 2)
+                        buff.insert (0, 1, '0');
+
+                    size_t pos { 0 };
+                    unsigned char parityCode { 0 };
+                    for(auto itt { buff.begin() }; itt != buff.end(); ++itt, ++pos){
+                        out    << *itt;
+                        out    << digitSep;
+                        if(BinFileToMT8870Dtmf::parity(*itt)) 
+                            parityCode += parityCount.at(pos);
+                    }
+
+                    parityString = to_string(parityCode);
+                    out    << parityString.at(0);
+                    out    << digitSep;
+
+                    out    << byteSep;
+                    out    << digitSep;
+            }
+
+            out    <<  endMsg;
+            out    <<  digitSep;
+
+        }catch(...){
+                 throw string("Dtmf encoding: Unexpected Error.");
+        }
+
+        return out;
+    }
 
     ostream& operator<< (ostream& out, const BinFileToDtmf& ftd){
         for( istreambuf_iterator<char> it(ftd.iFile.rdbuf());
@@ -130,6 +176,42 @@ namespace dtmfutil {
     }
 
     bool BinFileToDtmf::saveTo(const string& outFile) const noexcept{
+        bool ret{ true };
+        try{
+            oFile.open (outFile, ofstream::out);
+            oFile << *this;
+            oFile.close();
+        }catch(...){
+            ret  =  false;
+        }
+
+        return ret;
+    }
+
+    BinFileToMT8870Dtmf::BinFileToMT8870Dtmf(const std::string& fileName)
+       : iFile(fileName, ios::in | ios::binary)
+    {}
+
+    BinFileToMT8870Dtmf::~BinFileToMT8870Dtmf(void){
+           iFile.close();
+    }
+
+    bool BinFileToMT8870Dtmf::parity(char ch) noexcept{
+          int count { 0 };
+
+          if(ch & 0x01) count++;
+          if(ch & 0x02) count++;
+          if(ch & 0x04) count++;
+          if(ch & 0x08) count++;
+          if(ch & 0x10) count++;
+          if(ch & 0x20) count++;
+          if(ch & 0x40) count++;
+          if(ch & 0x80) count++;
+
+          return (count & 0x01) ? true : false;
+    }
+
+    bool BinFileToMT8870Dtmf::saveTo(const string& outFile) const noexcept{
         bool ret{ true };
         try{
             oFile.open (outFile, ofstream::out);

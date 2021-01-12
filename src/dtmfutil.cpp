@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
    try{
 
        if(argc != 1){
-           constexpr char    flags[]    { "b:t:o:s:hV" };
+           constexpr char    flags[]    { "c:b:t:o:s:hV" };
            ParseCmdLine      pcl(argc, argv, flags);
            if(pcl.getErrorState()){
                string exitMsg{string("Invalid  parameter or value").append(pcl.getErrorMsg())};
@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
            if(pcl.isSet('V')) versionInfo();
     
             if( !pcl.isSet('b')  &&
+                !pcl.isSet('c')  &&
                 !pcl.isSet('t')  &&
                 !pcl.isSet('o')  &&
                 !pcl.isSet('s')  &&
@@ -53,14 +54,16 @@ int main(int argc, char **argv) {
                      paramError(argv[0], "Invalid Parameter(s).");
     
            if( (pcl.isSet('s') && pcl.isSet('b')) ||
+               (pcl.isSet('s') && pcl.isSet('c')) ||
                (pcl.isSet('s') && pcl.isSet('t')) ||
                (pcl.isSet('s') && pcl.isSet('o')) )
-                     paramError(argv[0], "-s isn't compatible with these options: -b, -t, -o.");
-    
+                     paramError(argv[0], "-s isn't compatible with these options: -b, -c, -t, -o.");
+
            if( (pcl.isSet('b') && !pcl.isSet('o')) ||
+               (pcl.isSet('c') && !pcl.isSet('o')) ||
                (pcl.isSet('t') && !pcl.isSet('o')) ||
-               (pcl.isSet('o') && !( pcl.isSet('b') ||  pcl.isSet('t'))))
-                     paramError(argv[0], "-b or -t requires -o and vice versa.");
+               (pcl.isSet('o') && !( pcl.isSet('b') ||  pcl.isSet('c') || pcl.isSet('t'))))
+                     paramError(argv[0], "-b, -c or -t requires -o and vice versa.");
     
            if(pcl.isSet('s')){
                Dtmf  dtmf;
@@ -73,6 +76,11 @@ int main(int argc, char **argv) {
            if(pcl.isSet('b')){
                BinFileToDtmf ftd(pcl.getValue('b'));
                ftd.saveTo(pcl.getValue('o'));
+           }
+    
+           if(pcl.isSet('c')){
+               BinFileToMT8870Dtmf etd(pcl.getValue('c'));
+               etd.saveTo(pcl.getValue('o'));
            }
     
            if(pcl.isSet('t')){
@@ -105,7 +113,7 @@ int main(int argc, char **argv) {
        ret  =  1;
 
    }catch(...){
-       cerr << "Unexpected Error: " << endl;
+       cerr << "Unexpected Error.\n";
        ret  =  1;
    }
 
@@ -114,31 +122,35 @@ int main(int argc, char **argv) {
 
 void paramError(const char* progname, const char* err) noexcept{
 
-   if(err != nullptr) cerr << err << endl << endl;
+   if(err != nullptr) cerr << err << "\n\n";
 
-   cerr << progname   << " - a cmd line dtmf tool."
-                      << " GBonacini - (C) 2019   "                                        << endl
-        << "Syntax: "                                                                      << endl
-        << "       "  << progname                                                          << endl
-        << "       "  << "   The program will reproduce a sequence of ascii tone       "   << endl
-        << "       "  << "   representation (01234567890ABCD#*) received on stdin.     "   << endl
-        << "  or   "                                                                       << endl
-        << "       "  << progname << " [ -b input file to convert] [-t tone file]"         << endl
-        << "       "              << " [-o output file] [-s string to play]"               << endl
-        << "       "              << " | [-h] | [-V]  "                                    << endl << endl
-        << "       "  << "-b input file to convert.                                    "   << endl
-        << "       "  << "   It is a regular file (binary or text) that will be        "   << endl
-        << "       "  << "   converted in tone coding.                                 "   << endl
-        << "       "  << "-t tone file.                                                "   << endl
-        << "       "  << "   It contains a sequence of tones that will be converted    "   << endl
-        << "       "  << "   back to the initial file (binary or text).                "   << endl
-        << "       "  << "-o output file.                                              "   << endl
-        << "       "  << "   This flag is necessary if -b or -t is specified.          "   << endl
-        << "       "  << "   This file will contain the encoded/decode data.           "   << endl
-        << "       "  << "-s A string with one or more ascii representation of tones   "   << endl
-        << "       "  << "   (01234567890ABCD#*) that will be reproduced by sound card "   << endl
-        << "       "  << "-h print this help message."                                     << endl
-        << "       "  << "-V version information."                                         << endl;
+   cerr << progname   << " - a cmd line dtmf tool.\n"
+                      << " GBonacini - (C) 2019 \n"  
+        << "Syntax: \n"   
+        << "       "  << progname   << "\n" 
+        << "       "  << "   The program will reproduce a sequence of ascii tone     \n"   
+        << "       "  << "   representation (01234567890ABCD#*) received on stdin.   \n"   
+        << "  or   \n"
+        << "       "  << progname << " [ -b input file to convert] [-t tone file] \n" 
+        << "       "              << " [-c input file to convert]\n" 
+        << "       "              << " [-o output file] [-s string to play]\n"
+        << "       "              << " | [-h] | [-V]  \n\n" 
+        << "       "  << "-b input file to convert.                                    \n" 
+        << "       "  << "   It is a regular file (binary or text) that will be        \n" 
+        << "       "  << "   converted in tone coding.                                 \n" 
+        << "       "  << "-c input file to convert.                                    \n" 
+        << "       "  << "   It is a regular file (binary or text) that will be        \n" 
+        << "       "  << "   converted in tone coding for MT8870 IOT adapter           \n" 
+        << "       "  << "-t tone file.                                                \n" 
+        << "       "  << "   It contains a sequence of tones that will be converted    \n" 
+        << "       "  << "   back to the initial file (binary or text).                \n" 
+        << "       "  << "-o output file.                                              \n" 
+        << "       "  << "   This flag is necessary if -b or -t is specified.          \n" 
+        << "       "  << "   This file will contain the encoded/decode data.           \n" 
+        << "       "  << "-s A string with one or more ascii representation of tones   \n" 
+        << "       "  << "   (01234567890ABCD#*) that will be reproduced by sound card \n"
+        << "       "  << "-h print this help message. \n"                                    
+        << "       "  << "-V version information.";
 
    exit(1);
 }

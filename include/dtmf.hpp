@@ -103,6 +103,22 @@ namespace dtmfutil {
            friend std::ostream& operator<< (std::ostream& out, const BinFileToDtmf& ftd);
     };
 
+    class BinFileToMT8870Dtmf{
+        public:
+           explicit BinFileToMT8870Dtmf(const std::string& fileName);
+           ~BinFileToMT8870Dtmf(void);
+
+           bool          saveTo(const std::string& outFile)                const  noexcept;
+           static bool   parity(char ch)                                          noexcept;
+
+        private:
+           std::ifstream                 iFile;
+           mutable std::ofstream         oFile;
+           
+           friend std::ostream& operator<< (std::ostream& out, const BinFileToMT8870Dtmf& ftd);
+
+    };
+
     class DtmfToBinFile{
         public:
            explicit DtmfToBinFile(const std::string& fileName);

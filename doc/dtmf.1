@@ -4,7 +4,7 @@ dtmf \- a tool to generate DTMF tones. DTMF encoder/decoder for regular files.
 .SH SYNOPSIS
 .B  dtmf [-s string to play]
 .br
-.B         | [ -b input file to convert] [-t tone file] [-o output file]
+.B         | [ -b input file to convert] [ -c input file to convert] [-t tone file] [-o output file]
 .br
 .B         | [-h] | [-V]    
 .SH DESCRIPTION
@@ -13,6 +13,9 @@ dtmf is listening for events on file system involving file or directories and it
 .IP -b\ input\ file 
 It is a regular file (binary or text) that will be        
 converted in tone coding.                                 
+.IP -c\ input\ file 
+It is a regular file (binary or text) that will be        
+converted in tone coding intended for IOT/mocrocontroller devices, using a coding that doesn't need synchronization.                                 
 .IP -t\ input\ file                                                
 It contains a sequence of tones that will be converted back to the initial file (binary or text).                
 .IP -o\ output\ file                                              
